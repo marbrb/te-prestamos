@@ -4,20 +4,49 @@
   angular.module('CREED',  ['ngRoute'])
   .controller('MainController', [
     '$scope',
-    '$http',
     '$location',
-    function($scope, $http, $location) {
+    function($scope, $location) {
 
   }])
-  .controller('LoginController', [
-    '$scope',
-    '$http',
-    '$location',
-    function($scope, $http, $location) {
-      $scope.submit = function() {
-        console.log($scope.user);
-        //console.log($http);
+  .factory('autorization', function ($http) {
+    let url = 'http://10.20.232.38:8888/login';
+    return {
+      login: function (credentials) {
+          console.log('Helooo, me estoy loggeando');
+          return $http({
+            method: 'POST',
+            url: url,
+            data: credentials
+          });
       }
+    };
+  })
+  .controller('LoginController', ['$scope', '$location', 'autorization',
+    function($scope, $location, autorization) {
+      $scope.title = 'Login';
+
+      $scope.submit = function() {
+        const credentials = {
+          user: this.user.cedula,
+          pass: this.user.pass
+        };
+
+        console.log(credentials);
+
+        function success(data) {
+          let cookie = data.token;
+
+          $cookieStore.put('token', token);
+          $location.path('/');
+        };
+
+        function error(err) {
+          console.log(err);
+        };
+
+        autorization.login(credentials).then(success).catch(error);
+      };
+
     }])
     .config(function($routeProvider, $locationProvider) {
       $routeProvider
@@ -33,5 +62,5 @@
           }
         }
       })
-    });
+    })
 })(window.angular);
