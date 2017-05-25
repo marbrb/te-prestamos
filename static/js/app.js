@@ -1,13 +1,16 @@
 (function(angular) {
   'use strict';
 
-  angular.module('CREED',  ['ngRoute'])
-  .controller('MainController', [
-    '$scope',
-    '$location',
-    function($scope, $location) {
-
-  }])
+  angular.module('CREED',  ['ngRoute', 'ngCookies'])
+  .factory('consult', function($http) {
+      let url = '/creditos';
+      return {
+          getCreditos: function() {
+              //console.log($http.get);
+              return $http.get(url);
+          }
+      }
+  })
   .factory('autorization', function ($http) {
     let url = '/login';
     return {
@@ -21,8 +24,23 @@
       }
     };
   })
-  .controller('LoginController', ['$scope', '$location', 'autorization',
-    function($scope, $location, autorization) {
+  .controller('MainController', ['$scope', '$location', 'consult', function($scope, $location, consult) {
+    function success(res) {
+        //console.log(res.data);
+        if(res.data.logged === false) {
+            //The user is not logged
+            $location.path('/login');
+        }
+    }
+
+    function error(err) {
+        //TODO: Manejar el error
+    }  
+    console.log(consult);
+    consult.getCreditos().then(success).catch(error); 
+  }])
+
+  .controller('LoginController', ['$scope', '$location', 'autorization', '$cookies', function($scope, $location, autorization, $cookies) {
       $scope.title = 'Login';
 
       $scope.submit = function() {
@@ -33,12 +51,12 @@
 
         console.log(credentials);
 
-        function success(data) {
-          console.log(data);
-          // let cookie = data.token;
+        function success(res) {
+          console.log(res.data);
+          let cookie = res.data.token;
 
-          // $cookieStore.put('token', token);
-          // $location.path('/');
+          $cookies.put('cookie', cookie);
+          $location.path('/');
         };
 
         function error(err) {
@@ -52,7 +70,12 @@
     .config(function($routeProvider, $locationProvider) {
       $routeProvider
       .when('/', {
-        templateUrl: 'templates/login.html',
+          templateUrl: 'static/templates/home.html',
+          controller: 'MainController'
+
+      })
+      .when('/login', {
+        templateUrl: 'static/templates/login.html',
         controller: 'LoginController',
         resolve: {
           // I will cause a 1 second delay
