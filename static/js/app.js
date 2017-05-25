@@ -9,7 +9,7 @@
 
   }])
   .factory('autorization', function ($http) {
-    let url = 'http://10.20.232.38:8888/login';
+    let url = '/login';
     return {
       login: function (credentials) {
           console.log('Helooo, me estoy loggeando');
@@ -28,16 +28,17 @@
       $scope.submit = function() {
         const credentials = {
           user: this.user.cedula,
-          pass: this.user.pass
+          password: this.user.pass
         };
 
         console.log(credentials);
 
         function success(data) {
-          let cookie = data.token;
+          console.log(data);
+          // let cookie = data.token;
 
-          $cookieStore.put('token', token);
-          $location.path('/');
+          // $cookieStore.put('token', token);
+          // $location.path('/');
         };
 
         function error(err) {
