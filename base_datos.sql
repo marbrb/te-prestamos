@@ -11,12 +11,12 @@ create table clientes (
 create table creditos(
   id_credito INTEGER UNSIGNED PRIMARY KEY AUTO_INCREMENT,
   id_cliente INTEGER UNSIGNED NOT NULL,
-  estado ENUM('pendiente','aprobado','denegado') NOT NULL,
+  estado ENUM('pendiente','aprobado','denegado') DEFAULT "pendiente" NOT NULL,
   fecha_solicitud TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   activo BOOLEAN NOT NULL,
   monto INTEGER UNSIGNED NOT NULL,
-  interes DECIMAL(2,2) NOT NULL,
-  concepto_cliente BOOLEAN NOT NULL
+  interes DECIMAL(3,1) NOT NULL,
+  concepto_cliente ENUM('aceptado','rechazado','pendiente') DEFAULT "pendiente" NOT NULL
 );
 
 create table pagos (
