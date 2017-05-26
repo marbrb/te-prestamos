@@ -1,4 +1,6 @@
 import MySQLdb
+from hmac import compare_digest as compare_hash
+import crypt
 
 def create_connection():
     db = MySQLdb.connect(db="teprestamos", passwd="miguel")
@@ -25,7 +27,7 @@ def actualizar_credito(id_credito, concepto_cliente):
     db, c = create_connection()
 
     if concepto_cliente == "aceptado":
-        c.execute("update creditos set concepto_cliente=%s where id_credito=%s",("aceptado", id_credito))
+        c.execute("UPDATE creditos SET concepto_cliente=%s WHERE id_credito=%s",("aceptado", id_credito))
         db.commit()
         c.close()
         return 1
@@ -127,13 +129,12 @@ def obtener_cliente(cookie):
 def registrar_cookie(id_cliente, passwd, cookie):
     """registrar la cookie  del usuiario en la BD"""
     db, c = create_connection()
-    c.execute(
-        "SELECT id_cliente, password FROM clientes WHERE id_cliente=%s AND password=%s",(id_cliente,passwd,)
-    )
+    c.execute("SELECT password FROM clientes WHERE id_cliente=%s", (id_cliente,))
 
-    if c.fetchall():
+    res = c.fetchone()
+    equals = compare_hash(res[0], crypt.crypt(passwd, res[0]))
 
-        #TODO: preguntar si hay existe el id en la BD, de lo contrario registrarlo.
+    if equals:
         c.execute("UPDATE cookies SET cookie=%s WHERE id_cliente=%s",(cookie, id_cliente))
         db.commit()
         c.close()
