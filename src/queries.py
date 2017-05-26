@@ -1,5 +1,10 @@
 import MySQLdb
 
+def create_connection():
+    db = MySQLdb.connect(db="teprestamos", passwd="miguel")
+    c = db.cursor()
+    return db, c
+
 def serializar(campos, valores):
     """serializar estructuras a json"""
     r = []
@@ -17,8 +22,7 @@ def serializar(campos, valores):
     return json
 
 def actualizar_credito(id_credito, concepto_cliente):
-    db = MySQLdb.connect(passwd="teamito123", db="teprestamos")
-    c = db.cursor()
+    db, c = create_connection()
 
     if concepto_cliente == "aceptado":
         c.execute("update creditos set concepto_cliente=%s where id_credito=%s",("aceptado", id_credito))
@@ -52,8 +56,8 @@ def crear_credito(id_cliente, interes, monto):
     else:
         activo = False
 
-    db = MySQLdb.connect(passwd="teamito123", db="teprestamos")
-    c = db.cursor()
+    db, c = create_connection()
+
     res = c.execute(
     """
     INSERT INTO creditos (id_cliente,estado,activo,monto,interes) VALUES
@@ -66,17 +70,18 @@ def actualizar_pago(id_pago, estado):
     """actualizar un pago realizado"""
     if (estado != 'hecho' and estado == 'pendiente'):
         return 0
-    db = MySQLdb.connect(passwd="teamito123", db="teprestamos")
-    c = db.cursor()
+
+    db, c = create_connection()
+
     res = c.execute("UPDATE pagos SET estado=%s WHERE id_pago=%s",(estado, id_pago))
     c.close()
     db.commit()
     return res
 
 def obtener_pagos(id_credito):
-    """obtenr pagos del credito id_credito"""
-    db = MySQLdb.connect(passwd="teamito123", db="teprestamos")
-    c = db.cursor()
+    """obtener pagos del credito id_credito"""
+    db, c = create_connection()
+
     c.execute("SELECT * FROM pagos WHERE id_credito=%s",(id_credito,))
     res = c.fetchall()
     campos = ("id_pago",'id_credito','fecha_pago','monto','estado')
@@ -91,8 +96,7 @@ def obtener_pagos(id_credito):
 
 def obtener_creditos(id_cliente):
     """obtener creditos del cliente id_cliente"""
-    db = MySQLdb.connect(passwd="teamito123", db="teprestamos")
-    c = db.cursor()
+    db, c = create_connection()
     c.execute('SELECT * FROM creditos WHERE id_cliente=%s',(id_cliente,))
     res = c.fetchall()
     c.close()
@@ -110,8 +114,8 @@ def obtener_creditos(id_cliente):
 
 def obtener_cliente(cookie):
     """ verificar si la cookie que tiene el usuiario existe en la BD """
-    db = MySQLdb.connect(passwd="teamito123", db="teprestamos")
-    c = db.cursor()
+    db, c = create_connection()
+
     c.execute("SELECT id_cliente FROM cookies WHERE cookie=%s",(cookie,))
     res = c.fetchone()
     c.close()
@@ -122,13 +126,14 @@ def obtener_cliente(cookie):
 
 def registrar_cookie(id_cliente, passwd, cookie):
     """registrar la cookie  del usuiario en la BD"""
-    db = MySQLdb.connect(passwd="teamito123", db="teprestamos")
-    c = db.cursor()
+    db, c = create_connection()
     c.execute(
         "SELECT id_cliente, password FROM clientes WHERE id_cliente=%s AND password=%s",(id_cliente,passwd,)
     )
 
     if c.fetchall():
+
+        #TODO: preguntar si hay existe el id en la BD, de lo contrario registrarlo.
         c.execute("UPDATE cookies SET cookie=%s WHERE id_cliente=%s",(cookie, id_cliente))
         db.commit()
         c.close()
