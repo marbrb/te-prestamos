@@ -1,11 +1,11 @@
 create table clientes (
-  cliente_id INTEGER UNSIGNED PRIMARY KEY,
+  id_cliente INTEGER UNSIGNED PRIMARY KEY,
   nombre VARCHAR(60) NOT NULL,
   telefono INTEGER UNIQUE NOT NULL,
   email VARCHAR(30) UNIQUE NOT NULL,
   ciudad VARCHAR(20) NOT NULL,
   pais VARCHAR(20) NOT NULL,
-  password VARCHAR(40) NOT NULL
+  password VARCHAR(106) NOT NULL
 );
 
 create table creditos(
