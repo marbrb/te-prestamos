@@ -30,13 +30,15 @@
         if(res.data.logged === false) {
             //The user is not logged
             $location.path('/login');
+            return;
         }
+        console.log(res.data);
     }
 
     function error(err) {
         //TODO: Manejar el error
     }  
-    console.log(consult);
+    //console.log(consult);
     consult.getCreditos().then(success).catch(error); 
   }])
 
