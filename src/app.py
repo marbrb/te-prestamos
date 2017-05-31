@@ -2,7 +2,7 @@ from uuid import uuid4
 from tornado.ioloop import IOLoop
 from login import LoginHandler, BaseHandler
 from creditos import CreditosHandler
-from pagos import PagosHandler
+from pagos import PagosHandler, PagoHandler
 from tornado import web
 import os
 
@@ -22,13 +22,16 @@ class Application:
         self.app = web.Application([
                     web.url(r"/$", MainHandler),
                     web.url(r"/creditos", CreditosHandler),
+
                     web.url(r"/pagos/([0-9]+)", PagosHandler),
+
+                    web.url(r"/pago/([0-9]+)", PagoHandler),
 
                     #quejeso
                     web.url(r"/login", LoginHandler),
                     (r"/static/(.*)", web.StaticFileHandler, {"path": "../static",
                                                               "default_filename": "index.html"},),
-        ], cookie_secret=str(uuid4()), deafult_host='10.20.232.35')
+        ], cookie_secret=str(uuid4()), deafult_host='localhost')
 
     def run(self):
         self.app.settings["template_path"] = "../"
