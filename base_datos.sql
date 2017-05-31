@@ -10,7 +10,7 @@ create table clientes (
 
 create table creditos(
   id_credito INTEGER UNSIGNED PRIMARY KEY AUTO_INCREMENT,
-  id_cliente INTEGER UNSIGNED NOT NULL,
+  id_cliente INTEGER UNSIGNED UNIQUE NOT NULL,
   estado ENUM('pendiente','aprobado','denegado') DEFAULT "pendiente" NOT NULL,
   fecha_solicitud TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   activo BOOLEAN NOT NULL,
@@ -29,7 +29,7 @@ create table pagos (
 
 create table empresas (
   id_empresa INTEGER UNSIGNED PRIMARY KEY,
-  id_cliente INTEGER UNSIGNED NOT NULL,
+  id_cliente INTEGER UNSIGNED UNIQUE  NOT NULL,
   nombre VARCHAR(40) NOT NULL,
   direccion VARCHAR(30) NOT NULL,
   telefono INTEGER NOT NULL NULL,
@@ -39,7 +39,7 @@ create table empresas (
 
 create table cookies (
   id_cookie INTEGER UNSIGNED PRIMARY KEY AUTO_INCREMENT,
-  id_cliente INTEGER UNSIGNED NOT NULL,
+  id_cliente INTEGER UNSIGNED UNIQUE NOT NULL,
   password VARCHAR(60) NOT NULL,
   cookie VARCHAR(40)
 );
