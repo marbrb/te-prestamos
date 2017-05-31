@@ -15,6 +15,7 @@ class PagosHandler(BaseHandler):
         else:
             self.write(json.dumps({"logged": False}))
 
+class PagoHandler(BaseHandler):
     def put(self, id_pago):
         """actualizar pago"""
         user = obtener_cliente(self.get_secure_cookie("logged"))
